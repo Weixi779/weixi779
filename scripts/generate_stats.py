@@ -183,23 +183,62 @@ def fetch_stats(token: str, username: str) -> Stats:
 
 THEMES = {
     "light": {
-        "background": "#ffffff",
+        "background_start": "#ffffff",
+        "background_end": "#f6f8fa",
         "border": "#d0d7de",
         "title": "#1f2328",
         "label": "#636c76",
         "value": "#1f2328",
         "accent": "#0969da",
-        "divider": "#d8dee4",
+        "accent_end": "#54aeff",
+        "tile": "#ffffff",
+        "tile_border": "#d8dee4",
+        "primary_tile": "#eef6ff",
+        "primary_border": "#b6dcfe",
+        "icon_background": "#ddf4ff",
     },
     "dark": {
-        "background": "#0d1117",
+        "background_start": "#0d1117",
+        "background_end": "#161b22",
         "border": "#30363d",
         "title": "#f0f6fc",
         "label": "#8b949e",
         "value": "#f0f6fc",
         "accent": "#58a6ff",
-        "divider": "#21262d",
+        "accent_end": "#1f6feb",
+        "tile": "#161b22",
+        "tile_border": "#30363d",
+        "primary_tile": "#111d2e",
+        "primary_border": "#1f6feb",
+        "icon_background": "#0c2d48",
     },
+}
+
+
+ICONS = {
+    "activity": """
+      <path d="M1 8h3l2.2-4.5 3.3 9 2.1-4.5H15"/>
+    """,
+    "commit": """
+      <path d="M1 8h4M11 8h4"/>
+      <circle cx="8" cy="8" r="3"/>
+    """,
+    "lock": """
+      <rect x="3" y="7" width="10" height="7" rx="2"/>
+      <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>
+    """,
+    "pull_request": """
+      <circle cx="4" cy="3" r="2"/>
+      <circle cx="12" cy="13" r="2"/>
+      <path d="M4 5v8M10 3h1a3 3 0 0 1 3 3v2M10 1l2 2-2 2"/>
+    """,
+    "issue": """
+      <circle cx="8" cy="8" r="6"/>
+      <path d="M8 4.5v4M8 11.5h.01"/>
+    """,
+    "star": """
+      <path d="m8 1.5 2 4.1 4.5.7-3.3 3.2.8 4.5-4-2.1L4 14l.8-4.5-3.3-3.2 4.5-.7Z"/>
+    """,
 }
 
 
@@ -210,54 +249,84 @@ def format_number(value: int) -> str:
 def render_svg(username: str, stats: Stats, theme_name: str) -> str:
     theme = THEMES[theme_name]
     metrics = [
-        ("Total Contributions", stats.total_contributions),
-        ("Commit Contributions", stats.commit_contributions),
-        ("Private Contributions", stats.private_contributions),
-        ("Pull Requests", stats.pull_requests),
-        ("Issues", stats.issues),
-        ("Stars Earned", stats.stars_earned),
+        ("Total Contributions", stats.total_contributions, "activity"),
+        ("Commit Contributions", stats.commit_contributions, "commit"),
+        ("Private Contributions", stats.private_contributions, "lock"),
+        ("Pull Requests", stats.pull_requests, "pull_request"),
+        ("Issues", stats.issues, "issue"),
+        ("Stars Earned", stats.stars_earned, "star"),
     ]
 
     cells = []
-    for index, (label, value) in enumerate(metrics):
+    for index, (label, value, icon) in enumerate(metrics):
         column = index % 3
         row = index // 3
-        x = 36 + column * 228
-        y = 105 + row * 92
+        x = 28 + column * 228
+        y = 82 + row * 92
+        tile_class = "tile primary-tile" if index == 0 else "tile"
+        value_class = "metric-value accent-value" if index == 0 else "metric-value"
         cells.append(
             f"""  <g transform="translate({x} {y})">
-    <text class="value" x="0" y="0">{format_number(value)}</text>
-    <text class="label" x="0" y="27">{escape(label)}</text>
+    <rect class="{tile_class}" width="208" height="76" rx="10"/>
+    <rect class="icon-background" x="14" y="14" width="34" height="34" rx="9"/>
+    <g class="icon" transform="translate(23 23)">
+{ICONS[icon].rstrip()}
+    </g>
+    <text class="{value_class}" x="61" y="31">{format_number(value)}</text>
+    <text class="metric-label" x="61" y="54">{escape(label)}</text>
   </g>"""
         )
 
     cells_svg = "\n".join(cells)
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="720" height="238"
-  viewBox="0 0 720 238" role="img" aria-labelledby="title description">
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="720" height="268"
+  viewBox="0 0 720 268" role="img" aria-labelledby="title description">
   <title id="title">{escape(username)} GitHub activity</title>
   <desc id="description">
     Lifetime GitHub contribution statistics with private contributions shown separately.
   </desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="{theme['background_start']}"/>
+      <stop offset="1" stop-color="{theme['background_end']}"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="{theme['accent']}"/>
+      <stop offset="1" stop-color="{theme['accent_end']}"/>
+    </linearGradient>
+  </defs>
   <style>
     text {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }}
     .heading {{ fill: {theme['title']}; font-size: 18px; font-weight: 600; }}
-    .eyebrow {{ fill: {theme['accent']}; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; }}
-    .value {{
+    .subtitle {{ fill: {theme['label']}; font-size: 12px; }}
+    .username {{ fill: {theme['label']}; font-size: 12px; }}
+    .tile {{ fill: {theme['tile']}; stroke: {theme['tile_border']}; }}
+    .primary-tile {{ fill: {theme['primary_tile']}; stroke: {theme['primary_border']}; }}
+    .icon-background {{ fill: {theme['icon_background']}; }}
+    .icon {{
+      fill: none;
+      stroke: {theme['accent']};
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+    }}
+    .metric-value {{
       fill: {theme['value']};
-      font-size: 25px;
+      font-size: 21px;
       font-weight: 600;
       font-variant-numeric: tabular-nums;
     }}
-    .label {{ fill: {theme['label']}; font-size: 13px; font-weight: 400; }}
+    .accent-value {{ fill: {theme['accent']}; }}
+    .metric-label {{ fill: {theme['label']}; font-size: 12px; }}
   </style>
-  <rect x="0.5" y="0.5" width="719" height="237" rx="10"
-    fill="{theme['background']}" stroke="{theme['border']}"/>
-  <text class="eyebrow" x="36" y="34">GITHUB ACTIVITY</text>
-  <text class="heading" x="36" y="61">Lifetime contribution summary</text>
-  <line x1="36" y1="77.5" x2="684" y2="77.5" stroke="{theme['divider']}"/>
-  <line x1="246" y1="91" x2="246" y2="211" stroke="{theme['divider']}"/>
-  <line x1="474" y1="91" x2="474" y2="211" stroke="{theme['divider']}"/>
+  <rect x="0.5" y="0.5" width="719" height="267" rx="14"
+    fill="url(#background)" stroke="{theme['border']}"/>
+  <rect x="28" y="25" width="32" height="32" rx="10" fill="url(#accent)"/>
+  <path d="M36 41h3l2-4 3 8 2-4h6" fill="none" stroke="white"
+    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="heading" x="72" y="38">GitHub Activity</text>
+  <text class="subtitle" x="72" y="56">Lifetime contribution summary</text>
+  <text class="username" x="692" y="45" text-anchor="end">@{escape(username)}</text>
 {cells_svg}
 </svg>
 """
