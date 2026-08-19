@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="238"
+  viewBox="0 0 720 238" role="img" aria-labelledby="title description">
+  <title id="title">Weixi779 GitHub activity</title>
+  <desc id="description">
+    Lifetime GitHub contribution statistics with private contributions shown separately.
+  </desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .heading { fill: #f0f6fc; font-size: 18px; font-weight: 600; }
+    .eyebrow { fill: #58a6ff; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; }
+    .value {
+      fill: #f0f6fc;
+      font-size: 25px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .label { fill: #8b949e; font-size: 13px; font-weight: 400; }
+  </style>
+  <rect x="0.5" y="0.5" width="719" height="237" rx="10"
+    fill="#0d1117" stroke="#30363d"/>
+  <text class="eyebrow" x="36" y="34">GITHUB ACTIVITY</text>
+  <text class="heading" x="36" y="61">Lifetime contribution summary</text>
+  <line x1="36" y1="77.5" x2="684" y2="77.5" stroke="#21262d"/>
+  <line x1="246" y1="91" x2="246" y2="211" stroke="#21262d"/>
+  <line x1="474" y1="91" x2="474" y2="211" stroke="#21262d"/>
+  <g transform="translate(36 105)">
+    <text class="value" x="0" y="0">1,299</text>
+    <text class="label" x="0" y="27">Total Contributions</text>
+  </g>
+  <g transform="translate(264 105)">
+    <text class="value" x="0" y="0">675</text>
+    <text class="label" x="0" y="27">Commit Contributions</text>
+  </g>
+  <g transform="translate(492 105)">
+    <text class="value" x="0" y="0">573</text>
+    <text class="label" x="0" y="27">Private Contributions</text>
+  </g>
+  <g transform="translate(36 197)">
+    <text class="value" x="0" y="0">14</text>
+    <text class="label" x="0" y="27">Pull Requests</text>
+  </g>
+  <g transform="translate(264 197)">
+    <text class="value" x="0" y="0">5</text>
+    <text class="label" x="0" y="27">Issues</text>
+  </g>
+  <g transform="translate(492 197)">
+    <text class="value" x="0" y="0">42</text>
+    <text class="label" x="0" y="27">Stars Earned</text>
+  </g>
+</svg>
