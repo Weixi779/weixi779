@@ -24,7 +24,7 @@ jobs:
         uses: stats-organization/github-readme-stats-action@e856fc8de9d7729b463c468911e232cfbdc3d55e # v2.0.2
         with:
           card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&hide_border=true&include_all_commits=true
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide=contribs&theme=swift
           path: profile/stats.svg
           token: ${{ secrets.GITHUB_TOKEN }}
           core_version: 2.1.5
