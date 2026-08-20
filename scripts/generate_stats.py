@@ -183,34 +183,22 @@ def fetch_stats(token: str, username: str) -> Stats:
 
 THEMES = {
     "light": {
-        "background_start": "#ffffff",
-        "background_end": "#f6f8fa",
-        "border": "#d0d7de",
-        "title": "#1f2328",
-        "label": "#636c76",
-        "value": "#1f2328",
-        "accent": "#0969da",
-        "accent_end": "#54aeff",
-        "tile": "#ffffff",
-        "tile_border": "#d8dee4",
-        "primary_tile": "#eef6ff",
-        "primary_border": "#b6dcfe",
-        "icon_background": "#ddf4ff",
+        "background": "#ffffff",
+        "border": "#e7e9ec",
+        "title": "#181a1f",
+        "label": "#70757f",
+        "value": "#202228",
+        "accent": "#f05138",
+        "divider": "#eceef1",
     },
     "dark": {
-        "background_start": "#0d1117",
-        "background_end": "#161b22",
-        "border": "#30363d",
-        "title": "#f0f6fc",
-        "label": "#8b949e",
-        "value": "#f0f6fc",
-        "accent": "#58a6ff",
-        "accent_end": "#1f6feb",
-        "tile": "#161b22",
-        "tile_border": "#30363d",
-        "primary_tile": "#111d2e",
-        "primary_border": "#1f6feb",
-        "icon_background": "#0c2d48",
+        "background": "#0d0f12",
+        "border": "#262a30",
+        "title": "#f3f4f6",
+        "label": "#979ca6",
+        "value": "#f3f4f6",
+        "accent": "#ff7657",
+        "divider": "#24272d",
     },
 }
 
@@ -259,50 +247,33 @@ def render_svg(username: str, stats: Stats, theme_name: str) -> str:
 
     cells = []
     for index, (label, value, icon) in enumerate(metrics):
-        column = index % 3
-        row = index // 3
-        x = 28 + column * 228
-        y = 82 + row * 92
-        tile_class = "tile primary-tile" if index == 0 else "tile"
-        value_class = "metric-value accent-value" if index == 0 else "metric-value"
+        column = index // 3
+        row = index % 3
+        x = 32 + column * 360
+        y = 76 + row * 56
+        delay = index * 65
         cells.append(
             f"""  <g transform="translate({x} {y})">
-    <rect class="{tile_class}" width="208" height="76" rx="10"/>
-    <rect class="icon-background" x="14" y="14" width="34" height="34" rx="9"/>
-    <g class="icon" transform="translate(23 23)">
+    <g class="icon" transform="translate(0 6)">
 {ICONS[icon].rstrip()}
     </g>
-    <text class="{value_class}" x="61" y="31">{format_number(value)}</text>
-    <text class="metric-label" x="61" y="54">{escape(label)}</text>
+    <text class="metric-label" x="30" y="13">{escape(label)}</text>
+    <text class="metric-value" x="30" y="40" style="--delay: {delay}ms">{format_number(value)}</text>
   </g>"""
         )
 
     cells_svg = "\n".join(cells)
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="720" height="268"
-  viewBox="0 0 720 268" role="img" aria-labelledby="title description">
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="720" height="254"
+  viewBox="0 0 720 254" role="img" aria-labelledby="title description">
   <title id="title">{escape(username)} GitHub activity</title>
   <desc id="description">
     Lifetime GitHub contribution statistics with private contributions shown separately.
   </desc>
-  <defs>
-    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="{theme['background_start']}"/>
-      <stop offset="1" stop-color="{theme['background_end']}"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="{theme['accent']}"/>
-      <stop offset="1" stop-color="{theme['accent_end']}"/>
-    </linearGradient>
-  </defs>
   <style>
     text {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }}
-    .heading {{ fill: {theme['title']}; font-size: 18px; font-weight: 600; }}
+    .heading {{ fill: {theme['title']}; font-size: 17px; font-weight: 600; }}
     .subtitle {{ fill: {theme['label']}; font-size: 12px; }}
-    .username {{ fill: {theme['label']}; font-size: 12px; }}
-    .tile {{ fill: {theme['tile']}; stroke: {theme['tile_border']}; }}
-    .primary-tile {{ fill: {theme['primary_tile']}; stroke: {theme['primary_border']}; }}
-    .icon-background {{ fill: {theme['icon_background']}; }}
     .icon {{
       fill: none;
       stroke: {theme['accent']};
@@ -315,18 +286,31 @@ def render_svg(username: str, stats: Stats, theme_name: str) -> str:
       font-size: 21px;
       font-weight: 600;
       font-variant-numeric: tabular-nums;
+      opacity: 1;
+      animation: reveal 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: var(--delay);
     }}
-    .accent-value {{ fill: {theme['accent']}; }}
     .metric-label {{ fill: {theme['label']}; font-size: 12px; }}
+    @keyframes reveal {{
+      from {{ opacity: 0; transform: translateY(4px); }}
+      to {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @media (prefers-reduced-motion: reduce) {{
+      .metric-value {{ opacity: 1; animation: none; }}
+    }}
   </style>
-  <rect x="0.5" y="0.5" width="719" height="267" rx="14"
-    fill="url(#background)" stroke="{theme['border']}"/>
-  <rect x="28" y="25" width="32" height="32" rx="10" fill="url(#accent)"/>
-  <path d="M36 41h3l2-4 3 8 2-4h6" fill="none" stroke="white"
+  <rect x="0.5" y="0.5" width="719" height="253" rx="18"
+    fill="{theme['background']}" stroke="{theme['border']}"/>
+  <rect x="32" y="22" width="28" height="28" rx="9" fill="{theme['accent']}"/>
+  <path d="M38 36h3l1.8-3.5 2.6 7 1.8-3.5H54" fill="none" stroke="white"
     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <text class="heading" x="72" y="38">GitHub Activity</text>
-  <text class="subtitle" x="72" y="56">Lifetime contribution summary</text>
-  <text class="username" x="692" y="45" text-anchor="end">@{escape(username)}</text>
+  <text class="heading" x="68" y="34">GitHub Activity</text>
+  <text class="subtitle" x="68" y="52">Lifetime contribution summary</text>
+  <line x1="360" y1="76" x2="360" y2="236" stroke="{theme['divider']}"/>
+  <line x1="32" y1="132" x2="328" y2="132" stroke="{theme['divider']}"/>
+  <line x1="32" y1="188" x2="328" y2="188" stroke="{theme['divider']}"/>
+  <line x1="392" y1="132" x2="688" y2="132" stroke="{theme['divider']}"/>
+  <line x1="392" y1="188" x2="688" y2="188" stroke="{theme['divider']}"/>
 {cells_svg}
 </svg>
 """
