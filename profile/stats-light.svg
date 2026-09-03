@@ -51,7 +51,7 @@
       <path d="M1 8h3l2.2-4.5 3.3 9 2.1-4.5H15"/>
     </g>
     <text class="metric-label" x="30" y="13">Total Contributions</text>
-    <text class="metric-value" x="30" y="40" style="--delay: 0ms">1,374</text>
+    <text class="metric-value" x="30" y="40" style="--delay: 0ms">1,475</text>
   </g>
   <g transform="translate(32 132)">
     <g class="icon" transform="translate(0 6)">
@@ -60,7 +60,7 @@
       <circle cx="8" cy="8" r="3"/>
     </g>
     <text class="metric-label" x="30" y="13">Commit Contributions</text>
-    <text class="metric-value" x="30" y="40" style="--delay: 65ms">680</text>
+    <text class="metric-value" x="30" y="40" style="--delay: 65ms">775</text>
   </g>
   <g transform="translate(32 188)">
     <g class="icon" transform="translate(0 6)">
@@ -69,7 +69,7 @@
       <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>
     </g>
     <text class="metric-label" x="30" y="13">Private Contributions</text>
-    <text class="metric-value" x="30" y="40" style="--delay: 130ms">641</text>
+    <text class="metric-value" x="30" y="40" style="--delay: 130ms">647</text>
   </g>
   <g transform="translate(392 76)">
     <g class="icon" transform="translate(0 6)">
